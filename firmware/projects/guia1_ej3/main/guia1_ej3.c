@@ -1,8 +1,12 @@
-/*! @mainpage Template
+/*! @mainpage guia1_ej3
  *
  * @section genDesc General Description
  *
- * This section describes how the program works.
+ * Este programa define una estructura leds para controlar el estado y comportamiento de LEDs,
+ * con modos de encendido (ON), apagado (OFF), y alternancia (TOGGLE). La función controlLeds recibe un puntero 
+ * a esta estructura y, según el modo especificado, enciende, apaga o alterna el estado de un LED específico 
+ * durante un número de ciclos y un periodo de tiempo determinados. En la función app_main, se inicializa un LED 
+ * en modo ON con 10 ciclos y un periodo de 5 unidades, controlado por la función controlLeds.
  *
  * <a href="https://drive.google.com/...">Operation Example</a>
  *
@@ -19,7 +23,7 @@
  * |:----------:|:-----------------------------------------------|
  * | 12/09/2023 | Document creation		                         |
  *
- * @author Albano Peñalva (albano.penalva@uner.edu.ar)
+ * @author Oriana Kruk
  *
  */
 
@@ -37,15 +41,29 @@
 #define CONFIG_BLINK_PERIOD 500
 
 /*==================[internal data definition]===============================*/
+
+ /** @struct struct leds my_leds
+  * @brief La estructura leds define un conjunto de variables para controlar LEDs. mode especifica el modo de operación 
+  * (ON, OFF, TOGGLE), n_led indica el número del LED a controlar, n_ciclos determina la cantidad de ciclos de encendido/apagado,
+  * y periodo establece la duración de cada ciclo. Por ejemplo, my_leds puede usarse para controlar un LED específico con cierto 
+  * comportamiento en ciclos y duración definidos.
+ */
 struct leds
 {
-      uint8_t mode;      /*  ON, OFF, TOGGLE*/
+    uint8_t mode;      /*  ON, OFF, TOGGLE*/
 	uint8_t n_led;      /*  indica el número de led a controlar*/
 	uint8_t n_ciclos;   /* indica la cantidad de ciclos de ncendido/apagado*/
 	uint16_t periodo;   /* indica el tiempo de cada ciclo*/
 } my_leds; 
 
 /*==================[internal functions declaration]=========================*/
+ /** @fn void controlLeds(struct leds *leds_ptr)
+  * @brief recibe un puntero a una estructura leds que contiene información sobre el modo de operación, 
+  * el número de LED a controlar, la cantidad de ciclos y el periodo de tiempo. Según el modo especificado 
+  * en la estructura, la función enciende (ON), apaga (OFF) o alterna (TOGGLE) el estado del LED correspondiente 
+  * durante un número de ciclos y un periodo de tiempo determinados.
+  * @param .struct leds *leds_ptr
+ */
 void controlLeds(struct leds *leds_ptr)
 {
 	switch(leds_ptr -> mode )
