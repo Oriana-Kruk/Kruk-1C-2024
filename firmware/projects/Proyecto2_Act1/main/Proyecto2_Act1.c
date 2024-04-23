@@ -1,16 +1,27 @@
-/*! @mainpage Template
+/*! @mainpage proyecto 2_act 1
  *
  * @section genDesc General Description
  *
- * This section describes how the program works.
+ *  Se mide la distancia con el sensor y lo muestra por mantalla y marca rangos de distancias medida utilizando los leds.
+ * Si la distancia es menor a 10 cm, apagar todos los LEDs.
+ * Si la distancia está entre 10 y 20 cm, encender el LED_1.
+ * Si la distancia está entre 20 y 30 cm, encender el LED_2 y LED_1.
+ * Si la distancia es mayor a 30 cm, encender el LED_3, LED_2 y LED_1.
+ * 
+ * Al presionar la tecla 1 se prende y apaga la EDU-ESP y al presionar la tecla 2 se mantiene la medida en el display 
+ * pero sigue marcando las distancias con los leds
+ * 
  *
  * <a href="https://drive.google.com/...">Operation Example</a>
  *
  * @section hardConn Hardware Connection
  *
- * |    Peripheral  |   ESP32   	|
- * |:--------------:|:--------------|
- * | 	PIN_X	 	| 	GPIO_X		|
+ * |  EDU-CIAA-NXP  |    Peripheral 	|
+ * |:--------------:|:------------------|
+ * | 	GPIO_2	 	|  	  ECHO  	   	|
+ * | 	GPIO_3	 	|  	  TRIGGER 	   	|
+ * | 	+5V 	 	|  	  +5V   	   	|
+ * | 	GND 	 	|  	  GND   	   	|
  *
  *
  * @section changelog Changelog
@@ -19,7 +30,7 @@
  * |:----------:|:-----------------------------------------------|
  * | 12/09/2023 | Document creation		                         |
  *
- * @author Albano Peñalva (albano.penalva@uner.edu.ar)
+ * @author Oriana Kruk
  *
  */
 
@@ -45,18 +56,25 @@
 
 /*==================[internal data definition]===============================*/
 // Estas son variables GLOBALES, por lo que
-bool tecla1 = false; // comienza y detiene la medicion
-bool tecla2 = false; // mantiene el valor de la medicion
+
+/** @def tecla1
+ * @brief comienza y detiene la medicion
+*/
+bool tecla1 = false;
+
+/** @def tecla2
+ * @brief mantiene el valor de la medicion
+*/
+bool tecla2 = false; 
 
 /*==================[internal functions declaration]=========================*/
 
 /** @fn void Task_MostrarDistancia_enDisplay(uint16_t distancia)
- * @brief Mide y muestra la distancia medida utilizando los leds.
+ * @brief Mide la distancia con el sensor y lo muestra por mantalla y marca rangos de distancias medida utilizando los leds.
  * Si la distancia es menor a 10 cm, apagar todos los LEDs.
  * Si la distancia está entre 10 y 20 cm, encender el LED_1.
  * Si la distancia está entre 20 y 30 cm, encender el LED_2 y LED_1.
  * Si la distancia es mayor a 30 cm, encender el LED_3, LED_2 y LED_1.
- * Luego muestra el valor de distancia en cm utilizando el display LCD.
  * @param .void *pvParameter
  */
 void Task_MostrarDistancia_enDisplay(void *pvParameter) // ver lo de *pvParameter
@@ -106,8 +124,8 @@ void Task_MostrarDistancia_enDisplay(void *pvParameter) // ver lo de *pvParamete
 }
 
 /** @fn void Task_switches(void *pvParameter)
- * @brief Al presionar la TEC1 activar la medicion y al volver a presionar la TEC1 detener la medición.
- * Al presionar la TEC2 mantiene el resultado (“HOLD”).
+ * @brief Al presionar la tecla 1 prende y apaga la EDU-CIAA y al presionar la tecla 2  mantiene la medicion en el display
+ * pero sigue marcando los rangos de distancias con los leds
  * @param void *pvParameter
  */
 void Task_switches(void *pvParameter)
