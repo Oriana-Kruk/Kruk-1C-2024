@@ -2,8 +2,9 @@
  *
  * @section genDesc General Description
  *
- * El codigo se encarga de digitalizar una señal analógica proveniente del canal CH1 del conversor analógico-digital (ADC)
- * y transmitirla a un graficador de puerto serie en una PC a través de una comunicación UART.
+ * El codigo utiliza un conversor analógico-digital (ADC) para digitalizar una señal analógica en CH1 y la envía por UART
+ * a un graficador en la PC. Además, convierte una señal digital del ECG en una señal analógica y la envía por el mismo medio,
+ * utilizando temporizadores para notificar las tareas de lectura y envío de datos por UART.
  *
  * <a href="https://drive.google.com/...">Operation Example</a>
  *
@@ -84,8 +85,8 @@ void Notify(void *param)
 
 
  /** @fn  static void deAnalogico_aDigital(void *pvParameter)
-  * @brief  espera una notificación, lee el valor analógico del canal 1, 
-  * lo convierte a una cadena de caracteres y lo envía por UART
+  * @brief  espera una notificación, lee el valor analógico del canal 1, lo convierte a una cadena de caracteres y lo envía por UART.
+  * Convirtiendo de una senal analogica a una digital.
   * @param *pvParameter
  */
 static void deAnalogico_aDigital(void *pvParameter)
