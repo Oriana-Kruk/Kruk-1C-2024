@@ -1,6 +1,14 @@
 /*! @mainpage proyecto 2_act 3
  *
  * @section genDesc General Description
+ * 
+ * Este programa realiza lo siguiente:
+ * 1- Utiliza un sensor para medir distancias y mostrarlas en un display.
+ * 2- Controla LEDs según el rango de distancia medida.
+ * 3- Envia las mediciones al terminal de una PC a través del puerto serie en un formato específico: 
+ *    3 dígitos ASCII de distancia, seguidos de un espacio, dos caracteres para la unidad (cm), y un cambio de línea "\r\n".
+ * 4- Permite el control de la medición y la retención de resultados utilizando las teclas "O" y "H", 
+ *    replicando la funcionalidad de las teclas 1 y 2 realizadas en la Act 1.
  *
  * <a href="https://drive.google.com/...">Operation Example</a>
  *
@@ -39,19 +47,13 @@
 #include "timer_mcu.h"
 #include "uart_mcu.h"
 
-// #define HC_SR04_H
-// #define HC_SR04_H
-
 /*==================[macros and definitions]=================================*/
-//#define CONFIG_BLINK_PERIOD 1000 // para las mediciones
-//#define CONFIG_BLINK_PERIOD_2 50 // para las teclas
 #define UART_NO_INT	0		/*!< Flag used when no reading interruption is required */
 uint16_t distancia;
 
 /*==================[internal data definition]===============================*/
 // Estas son variables GLOBALES, por lo que
 TaskHandle_t led1_task_handle = NULL;
-//TaskHandle_t led1_task_handle = NULL;
 
 /** @def tecla1
  * @brief comienza y detiene la medicion
@@ -65,10 +67,17 @@ bool tecla2 = false;
 
 /*==================[internal functions declaration]=========================*/
 
+/** @fn static void TansferirDatos()
+ * @brief Envía los datos de la distancia medida a través del puerto serie (UART) hacia un terminal en una PC (UART_PC). 
+ * Utiliza la función UartItoa para convertir el valor numérico de la distancia (representado como un entero)
+ *  en una cadena de caracteres en formato decimal, que luego es enviada mediante UartSendString. 
+ * Además, al final de la cadena de distancia, se envía " cm\r\n" para indicar la unidad de medida (centímetros)
+ * y un cambio de línea en el terminal.
+ * @param 
+ */
 //esta funcion es especifica del ej 3
 static void TansferirDatos(){
-	UartSendString(UART_PC, (char*)UartItoa(distancia, 10)); //el UartSendString envia una cadena a raves del puerto serie, los datos se envian a UART_PC
-	//y la cadena que se envia es la que el UartItoa convierte la distancia medida en un string, "distancia" es el numero a ser convertido y la base de coonvercion es 10(decimal)
+	UartSendString(UART_PC, (char*)UartItoa(distancia, 10)); 
 	UartSendString(UART_PC, " cm\r\n");
 }
 /** @fn void Task_MostrarDistancia_enDisplay(uint16_t distancia)
@@ -125,20 +134,43 @@ void Task_MostrarDistancia_enDisplay(void *pvParameter) // ver lo de *pvParamete
 	}
 }
 
+/** @fn prende_apaga()
+ * @brief Utiliza una variable booleana (tecla1) para alternar su valor cada vez que se llama, 
+ * lo que trabaja como interruptor de encendido y apagado.
+ * @param 
+ */
 void prende_apaga()
 {
 	tecla1 = !tecla1;
 }
 
+/** @fn prende_apaga()
+ * @brief Utiliza una variable booleana (tecla2) para invertir su estado cada vez que se llama,
+ * para mantener o no el resultado medido.
+ * @param 
+ */
 void Hold()
 {
 	tecla2 = !tecla2;
 }
+
+/** @fn void FuncTimerA(void *param)
+ * @brief Cuando el temporizador asociado a esta función alcanza su límite de tiempo, se genera una interrupción que activa FuncTimerA.
+ * Dentro de esta función, vTaskNotifyGiveFromISR tiene un papel crucial al enviar una notificación importante a la tarea asociada 
+ * al LED_1 (led1_task_handle), permitiéndole continuar su ejecución en el momento adecuado.
+ * @param .void *param
+ */
 void FuncTimerA(void *param)
 {
 	vTaskNotifyGiveFromISR(led1_task_handle, pdFALSE); /* Envía una notificación a la tarea asociada al LED_1 */
 }
 
+/** @fn static void ObtenerDatos()
+ * @brief La función ObtenerDatos lee un byte de datos del puerto serie (UART_PC). Luego, utiliza una estructura de selección
+ * (switch) para verificar qué caracter se ha recibido. Si el caracter es 'O', se llama a la función prende_apaga, que realiza
+ * la acción de encendido o apagado. Si el caracter es 'H', se llama a la función Hold, que mantiene el valor medido de la distancia.
+ * @param 
+ */
 static void ObtenerDatos(){
 	uint8_t data;
 	UartReadByte(UART_PC, &data); //UART_PC puerto usb  y data va a los datos almacenados
