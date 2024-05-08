@@ -130,16 +130,32 @@ void Task_MostrarDistancia_enDisplay(void *pvParameter) // ver lo de *pvParamete
 		//vTaskDelay(CONFIG_BLINK_PERIOD / portTICK_PERIOD_MS);
 	}
 }
-
+/** @fn prende_apaga()
+ * @brief Utiliza una variable booleana (tecla1) para alternar su valor cada vez que se llama, 
+ * lo que trabaja como interruptor de encendido y apagado.
+ * @param 
+ */
 void prende_apaga()
 {
 	tecla1 = !tecla1;
 }
 
+/** @fn prende_apaga()
+ * @brief Utiliza una variable booleana (tecla2) para invertir su estado cada vez que se llama,
+ * para mantener o no el resultado medido.
+ * @param 
+ */
 void Hold()
 {
 	tecla2 = !tecla2;
 }
+
+/** @fn void FuncTimerA(void *param)
+ * @brief Cuando el temporizador asociado a esta función alcanza su límite de tiempo, se genera una interrupción que activa FuncTimerA.
+ * Dentro de esta función, vTaskNotifyGiveFromISR tiene un papel crucial al enviar una notificación importante a la tarea asociada 
+ * al LED_1 (led1_task_handle), permitiéndole continuar su ejecución en el momento adecuado.
+ * @param .void *param
+ */
 void FuncTimerA(void *param)
 {
 	vTaskNotifyGiveFromISR(led1_task_handle, pdFALSE); /* Envía una notificación a la tarea asociada al LED_1 */
