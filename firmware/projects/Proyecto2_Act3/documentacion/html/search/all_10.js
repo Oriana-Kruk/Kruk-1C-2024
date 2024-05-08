@@ -23,7 +23,7 @@ var searchData=
   ['port_20',['port',['../structserial__config__t.html#a27067c816e8c5402c7be0da9780678b0',1,'serial_config_t']]],
   ['pos_5fgamma_21',['POS_GAMMA',['../ili9341_8c.html#a964889b3527f09608fde445c20847b87',1,'ili9341.c']]],
   ['pos_5fgamma_22',['pos_gamma',['../ili9341_8c.html#ae9f7984c806b71627776323c6d7e642a',1,'ili9341.c']]],
-  ['prende_5fapaga_23',['prende_apaga',['../_proyecto2___act3_8c.html#a2c9760f0b097391045cc136ea29b8e13',1,'Proyecto2_Act3.c']]],
+  ['prende_5fapaga_23',['prende_apaga',['../_proyecto2___act3_8c.html#ae4b619f7bfbfbb19f1bb300ce1b85a6b',1,'Proyecto2_Act3.c']]],
   ['programable_24',['Drivers Programable',['../group___drivers___programable.html',1,'']]],
   ['project_5felf_5fsrc_5fesp32c6_2ec_25',['project_elf_src_esp32c6.c',['../bootloader_2project__elf__src__esp32c6_8c.html',1,'(Espacio de nombres global)'],['../project__elf__src__esp32c6_8c.html',1,'(Espacio de nombres global)']]],
   ['proyecto_202_5fact_203_26',['proyecto 2_act 3',['../index.html',1,'']]],
