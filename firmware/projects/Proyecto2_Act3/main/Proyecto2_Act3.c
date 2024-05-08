@@ -173,8 +173,6 @@ void app_main(void)
 	};
 	TimerInit(&my_timer);
 
-
-
 	serial_config_t my_uart = {
 		.port = UART_PC,  //puerto
 		.baud_rate = 9600, //bits por segundo
