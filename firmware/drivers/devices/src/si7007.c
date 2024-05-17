@@ -9,7 +9,8 @@
 /*==================[internal functions declaration]=========================*/
 
 /*==================[internal data definition]===============================*/
-
+analog_input_config_t temp_config;
+analog_input_config_t hum_config;
 /*==================[external data definition]===============================*/
 
 /*==================[internal functions definition]==========================*/
@@ -23,11 +24,13 @@ bool Si7007Init(Si7007_config *pins){
 
 	temp_config.input = pins->PWM_2;
 	temp_config.mode = ADC_SINGLE;
-	temp_config.pAnalogInput = NULL;
+	//temp_config.pAnalogInput = NULL;
 
 	hum_config.input = pins->PWM_1;
 	hum_config.mode = ADC_SINGLE;
-	hum_config.pAnalogInput = NULL;
+	//hum_config.pAnalogInput = NULL;
+
+    return true; 
 }
 
 float Si7007MeasureTemperature(void) {
@@ -61,7 +64,7 @@ float Si7007MeasureHumidity(void) {
 }
 
 bool Si7007Deinit(Si7007_config *pins){
-
-
+return true; 
 }
+
 /*==================[end of file]============================================*/
