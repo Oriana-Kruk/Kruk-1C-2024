@@ -26,6 +26,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "si7007.h"
+#include "analog_io_mcu.h"
+#include "uart_mcu.h"
 
 #include <stdbool.h>
 #include "gpio_mcu.h"
@@ -50,7 +52,7 @@ typedef struct {
 
  //se crea una instancia de LineSensor_config llamada lineSensorConfig y inicializándola con el pin
 LineSensor_config lineSensorConfig = {
-    .line_sensor_pin = GPIO_4 // 
+    .line_sensor_pin = GPIO_4 // ver si lo puedo usar
 };
 
 volatile uint32_t lineCount = 0;  // Contador de líneas detectadas
@@ -62,13 +64,19 @@ TaskHandle_t xTaskToNotify = NULL;  // Handle de la tarea que será notificada
   * @brief La función "getTemperature" llama a "Si7007MeasureTemperature", que es una función del driver del sensor 
   * que realiza la medición de la temperatura. El valor de la temperatura medido se almacena en la variable temperature.
  */
-float getTemperature(void);
+//float getTemperature(void);
 
  /** @fn  getHumidity(void)
   * @brief La función "getHumidity" llama a "Si7007MeasureHumidity", que es una función del driver del sensor 
   * que realiza la medición de la humedad. El valor de la humedad se almacena en la variable humidity.
  */
-float getHumidity(void);
+//float getHumidity(void);
+
+ /** @fn static void deAnalogico_aDigital(void *pvParameter);
+  * @brief mide temperatura y humedad y convierte de analogico a digital
+  * @param void *pvParameter
+ */
+static void deAnalogico_aDigital(void *pvParameter);
 
  /** @fn void initLineSensor(LineSensor_config *config)
   * @brief Esta función inicializa el sensor de línea TCRT5000 configurando el pin especificado en el parámetro config como entrada.
@@ -96,25 +104,51 @@ void timerCallback(void *param);
   * de estado. Incrementa el contador lineCount y notifica a una tarea de FreeRTOS que la interrupción ha ocurrido. 
   * @param void* arg
  */
-void IRAM_ATTR lineDetectionISR(void* arg);
+void IRAM_ATTR lineDetectionISR(void* arg); //preguntar lo de IRAM_ATTR. 
+//IRAM_ATTR: Es un atributo específico para ESP32 que indica que la función debe ser ubicada en la memoria IRAM (Internal RAM),
+//lo cual es crítico para funciones de interrupción para que sean rápidas y eficientes.
 
 /*==================[external functions definition]==========================*/
 
 
-float getTemperature(void) {
+//float getTemperature(void) {
     // Medir la temperatura
-    float temperature = Si7007MeasureTemperature();
-    return temperature;
+    //float temperature = Si7007MeasureTemperature();
+   // return temperature;
+//}
+
+//float getHumidity(void) {
+    // Medir la humedad
+   // float humidity = Si7007MeasureHumidity();
+  //  return humidity;
+//}
+
+static void deAnalogico_aDigital(void *pvParameter) {
+    float temperature, humidity;
+
+    while (true) {
+        // Medir la temperatura y humedad utilizando el sensor Si7007
+        temperature = Si7007MeasureTemperature();
+        humidity = Si7007MeasureHumidity();
+
+        // Enviar los valores de temperatura y humedad por UART
+        UartSendString(UART_PC, "Temperatura: ");
+        UartSendString(UART_PC, (char *)UartItoa((int)temperature, 10));
+        UartSendString(UART_PC, " °C\r\n");
+
+        UartSendString(UART_PC, "Humedad: ");
+        UartSendString(UART_PC, (char *)UartItoa((int)humidity, 10));
+        UartSendString(UART_PC, " %\r\n");
+
+        // Esperar un tiempo antes de realizar la siguiente medición
+        vTaskDelay(pdMS_TO_TICKS(1000)); // Esperar 1 segundo
+    }
 }
 
-float getHumidity(void) {
-    // Medir la humedad
-    float humidity = Si7007MeasureHumidity();
-    return humidity;
-}
+
 
 void initLineSensor(LineSensor_config *config) {
-    // Configurar el pin del sensor de línea como entrada
+    // Configurar el pin del sensor de detector de línea como entrada
     gpio_config_t io_conf = {
         .pin_bit_mask = (1ULL << config->line_sensor_pin),
         .mode = GPIO_MODE_INPUT,
