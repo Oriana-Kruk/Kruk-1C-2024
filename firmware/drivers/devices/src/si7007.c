@@ -24,11 +24,9 @@ bool Si7007Init(Si7007_config *pins){
 
 	temp_config.input = pins->PWM_2;
 	temp_config.mode = ADC_SINGLE;
-	//temp_config.pAnalogInput = NULL;
 
 	hum_config.input = pins->PWM_1;
 	hum_config.mode = ADC_SINGLE;
-	//hum_config.pAnalogInput = NULL;
 
     return true; 
 }
