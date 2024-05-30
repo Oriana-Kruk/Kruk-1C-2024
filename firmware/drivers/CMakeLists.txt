@@ -23,6 +23,7 @@ set(srcs
     "devices/src/hx711.c"
     "devices/src/mpu6050.c"
     "devices/src/si7007.c"
+    "devices/src/tcrt5000.c"
     )
 
 # Always included headers
