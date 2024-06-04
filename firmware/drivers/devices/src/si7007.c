@@ -23,15 +23,20 @@ bool Si7007Init(Si7007_config *pins){
 	GPIOOn(pins->select); //Lo pongo en 1 para que PWM 2 sea temperatura y PWM 1 humedad.
 
 	temp_config.input = pins->PWM_2;
+    //temp_config.input=CH3;    
 	temp_config.mode = ADC_SINGLE;
 
 	hum_config.input = pins->PWM_1;
+    //hum_config.input =CH2;
 	hum_config.mode = ADC_SINGLE;
+    
+    AnalogInputInit(&temp_config);
+    AnalogInputInit(&hum_config);
 
     return true; 
 }
 
-float Si7007MeasureTemperature(void) {
+/*float Si7007MeasureTemperature(void) {
     uint16_t value;
     float conversion = 0;
     float temperature = 0;
@@ -44,18 +49,29 @@ float Si7007MeasureTemperature(void) {
     temperature = -46.85 + (valor * 175.71); //  según la hoja de datos.
 
     return temperature;
+}*/
+
+float Si7007MeasureTemperature(void){
+
+	uint16_t value;
+	float temperature = 0;
+	float valor = 0;
+    AnalogInputReadSingle(temp_config.input, &value);
+	valor = (value/1000.0)/V_REF;
+	temperature = -46.85 + (valor*(175.71)); 
+	return temperature;
+
 }
+
 float Si7007MeasureHumidity(void) {
     uint16_t value;
     float conversion = 0;
     float humidity = 0;
     float valor = 0;
 
-    AnalogInputInit(&hum_config);
+    //AnalogInputInit(&hum_config);
     AnalogInputReadSingle(hum_config.input, &value); 
-    
-    conversion = value * V_REF / TOTAL_BITS;
-    valor = conversion / V_REF;
+    valor = (value/1000.0)/V_REF;
     humidity = -6 + (valor * 125); //según la hoja de datos.
 
     return humidity;

@@ -8,8 +8,8 @@
 #include "analog_io_mcu.h"
 
 /*==================[macros]=================================================*/
-#define V_REF 3.3                /**< Tensión de referencia */
-#define TOTAL_BITS 1024          /**< Cantidad total de bits */
+#define V_REF 3.3               /**< Tensión de referencia */
+#define TOTAL_BITS  4096      /**< Cantidad total de bits */
 
 /*==================[typedef]================================================*/
 typedef struct {                /*!< Si7007 Inputs config struct */

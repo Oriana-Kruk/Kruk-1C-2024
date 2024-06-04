@@ -53,7 +53,7 @@
 
 /*==================[inclusions]=============================================*/
 #include "tcrt5000.h"
-#include "chip.h"
+#include "gpio_mcu.h"
 
 /*==================[macros and definitions]=================================*/
 
