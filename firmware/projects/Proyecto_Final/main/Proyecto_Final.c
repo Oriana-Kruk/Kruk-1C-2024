@@ -35,9 +35,16 @@
 #include "driver/gpio.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "led.h"
+#include "ble_mcu.h"
 
 /*==================[macros and definitions]=================================*/
-//Si7007_config my_sensor;
+float temperature =0;
+float humidity =0;
+float vel_viento =0;
+#define CONFIG_BLINK_PERIOD 500
+#define LED_BT	LED_1
+
 /*==================[internal data definition]===============================*/
 uint16_t contador = 0;
 /*==================[internal functions declaration]=========================*/
@@ -78,10 +85,12 @@ static void medir_velocidad(void *pvParameter)
     {
         revol_por_seg= (float)contador/8.0;
 
-        //aca va la cuenta para calcular vel lineal a partir de las revol por seg
+//ec para pasar de revol por segundo a velocidad lineal (m/seg)   -> vel=2*pi*radio (metros)*revol por seg
+        vel_viento= 2 * 3.14 * 0.0225 * revol_por_seg;
 
         printf("revoluciones por segundo %f \n", revol_por_seg);
         printf("cont de lineas %d \n", contador);
+        printf("velocidad del viento %f \n", vel_viento);
 
         contador = 0;
 
@@ -92,26 +101,67 @@ void ContarLineas(){
     contador++;
 }
 
+static void deteccion(void *pvParameter)
+{
+    while (true)
+    {
+    medir_tempertatura_y_humedad(pvParameter);
+    medir_velocidad(pvParameter);
+
+ //ver con que valores pruebo en la vida real seria temp>30`C hum<30%  viento>20km/h
+    if (temperature>30 && humidity<30 && vel_viento>20)
+    {
+      // BleSendString(msg);
+    }
+    
+
+       // printf("velocidad del viento %f \n", vel_viento);
+        vTaskDelay(1000/portTICK_PERIOD_MS); 
+    }
+}
+void read_data(uint8_t * data, uint8_t length){}
+
 void app_main(void)
 {
-  // Inicializacion de sensores
-    
-    //Tcrt5000Init(gpio_t dout)
-    GPIOInit(GPIO_23, GPIO_INPUT);
+    GPIOInit(GPIO_23, GPIO_INPUT); //inicializo el contador de lineas
     GPIOActivInt(GPIO_23, ContarLineas, true, NULL);
+
+    LedsInit();
+
     // configura el sensor Si7007
-    Si7007_config my_sensor = {
-        .select = GPIO_9,
-        .PWM_1 = CH1,
-        .PWM_2 = CH2,
-    };
-    Si7007Init(&my_sensor);  // Inicializar el sensor Si7007
+ //   Si7007_config my_sensor = {
+  //      .select = GPIO_9,
+ //       .PWM_1 = CH1,
+   //     .PWM_2 = CH2,
+   // };
+    //Si7007Init(&my_sensor);  // Inicializar el sensor Si7007
 
-    // Crear la tarea que será notificada por la interrupción del sensor de temp y humedad
-    xTaskCreate(&medir_tempertatura_y_humedad, "medir tempertatura y humedad", 2048, NULL, 5, NULL);
-    xTaskCreate(&medir_velocidad, "medir velocidad del viento", 2048, NULL, 5, NULL);
+    ble_config_t ble_configuration = {
+        "Alarma incendios",
+        read_data
+    }; 
+    BleInit(&ble_configuration);
 
+    // Creo las tareas
+   // xTaskCreate(&medir_tempertatura_y_humedad, "medir tempertatura y humedad", 2048, NULL, 5, NULL);
+   // xTaskCreate(&medir_velocidad, "medir velocidad del viento", 2048, NULL, 5, NULL);
+   // xTaskCreate(&deteccion, "alerta deteccion peligrosa", 2048, NULL, 5, NULL);
 
+while(1){
+        vTaskDelay(CONFIG_BLINK_PERIOD / portTICK_PERIOD_MS);
+        switch(BleStatus()){
+            case BLE_OFF:
+                LedOff(LED_BT);
+            break;
+            case BLE_DISCONNECTED:
+                LedToggle(LED_BT);
+            break;
+            case BLE_CONNECTED:
+                LedOn(LED_BT);
+            break;
+        }
+
+}
 }
 
 /*==================[end of file]============================================*/
