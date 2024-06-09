@@ -111,10 +111,9 @@ static void deteccion(void *pvParameter)
  //ver con que valores pruebo en la vida real seria temp>30`C hum<30%  viento>20km/h
     if (temperature>30 && humidity<30 && vel_viento>20)
     {
-      // BleSendString(msg);
+       BleSendString("RIESGO DE INCENDIO");
     }
     
-
        // printf("velocidad del viento %f \n", vel_viento);
         vTaskDelay(1000/portTICK_PERIOD_MS); 
     }
