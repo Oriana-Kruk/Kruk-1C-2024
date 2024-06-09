@@ -77,12 +77,17 @@ TaskFunction_t task_handle2 = NULL;
   * @brief  notifica a las tareas task_handle1 y task_handle2
   * @param *param
  */
-void Notify(void *param)
+void Notify1(void *param)
 {
 	vTaskNotifyGiveFromISR(task_handle1, pdFALSE);
-	vTaskNotifyGiveFromISR(task_handle2, pdFALSE);
+
 }
 
+void Notify2(void *param)
+{
+
+	vTaskNotifyGiveFromISR(task_handle2, pdFALSE);
+}
 
  /** @fn  static void deAnalogico_aDigital(void *pvParameter)
   * @brief  espera una notificación, lee el valor analógico del canal 1, lo convierte a una cadena de caracteres y lo envía por UART.
@@ -138,16 +143,16 @@ void app_main(void)
 		.mode = ADC_SINGLE,  // Se configura para realizar una única lectura analógica
 	};
 	
-	// inicialización de timers
+	// inicialización de timers 
 	timer_config_t timer_1 = {
 		.timer = TIMER_A,
 		.period = TIME_PERIOD,
-		.func_p = Notify ,
+		.func_p = Notify1 ,
 		.param_p = NULL};
 	timer_config_t timer_2 = {
 		.timer = TIMER_B,
 		.period = TIME_PERIOD,
-		.func_p = Notify,
+		.func_p = Notify2,
 		.param_p = NULL};
 	//configura los parámetros de comunicación serial, específicamente para la UART 
 	serial_config_t serial_global = {

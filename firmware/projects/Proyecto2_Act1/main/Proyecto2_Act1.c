@@ -34,6 +34,21 @@
  *
  */
 
+/*1-Mostrar distancia medida utilizando los leds de la siguiente manera:
+
+Si la distancia es menor a 10 cm, apagar todos los LEDs.
+Si la distancia está entre 10 y 20 cm, encender el LED_1.
+Si la distancia está entre 20 y 30 cm, encender el LED_2 y LED_1.
+Si la distancia es mayor a 30 cm, encender el LED_3, LED_2 y LED_1.
+
+
+2-Mostrar el valor de distancia en cm utilizando el display LCD.
+3-Usar TEC1 para activar y detener la medición.
+4-Usar TEC2 para mantener el resultado (“HOLD”).
+5-Refresco de medición: 1 s
+
+*/
+
 /*==================[inclusions]=============================================*/
 #include <stdio.h>
 #include <stdint.h>
