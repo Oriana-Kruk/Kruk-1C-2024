@@ -47,6 +47,7 @@
 #define VOLTAJE_MAX 3300
 #define PH_MIN 6.0
 #define PH_MAX 6.7
+#define humedad
 
 /*==================[internal data definition]===============================*/
 TaskHandle_t sumnistroaAgua_task_handle = NULL;
@@ -79,7 +80,15 @@ void sensorPHB()
  */
 void sensor_humedad()
 {
-	GPIOOn(SENSOR_HUMEDAD); //
+	if (humedad=0)
+	{
+		GPIOOff(SENSOR_HUMEDAD);
+	}
+	else if (humedad=1)
+	{
+		GPIOOn(SENSOR_HUMEDAD);
+	}
+	
 }
 
 /** @fn void Stop()
@@ -139,7 +148,7 @@ void Task_SuministoAgua(void *pvParameter)
 {
 	uint16_t humedad;
 	
-	if (humedad=0)
+	if (humedad==0)
 	{
 		MensajeUART(1);
 	}
