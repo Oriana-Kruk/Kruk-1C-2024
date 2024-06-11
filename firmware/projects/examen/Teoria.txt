@@ -1,0 +1,9 @@
+1)- El protocolo de comunicacion sincrono que se refiere la figura es I2C.
+Las principales caracteristicas de este protocolo es que es serie, sincrono y half-duplex.
+Cuenta con solo dos lineas, la linea SCL (serial clock) y la linea SDA (serial data).
+Como ventajas tiene unicamente 2 lineas, y se pueden conectar mas de un slave a una misma linea.
+
+2)- La figura se refiere a un conversor (ADC).
+Es un conversor analogico digital.
+El capacitor forma parte de la modularizacion, nos se debe quitar el capacitor ya que alli, cuando se abre la llave "s" es donde se almacena la carga que tiene estrecha relacion con el voltaje de entrada.
+Por lo que si se omite el capacitor no se va a poder realizar esa almacenizacion que es requerida luego para la cuantificacion y por ende en la final codificacio.
