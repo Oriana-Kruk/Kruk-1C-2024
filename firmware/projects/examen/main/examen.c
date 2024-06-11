@@ -148,7 +148,7 @@ void Task_SuministoAgua(void *pvParameter)
 {
 	uint16_t humedad;
 	
-	if (humedad==0)
+	if (humedad=0)
 	{
 		MensajeUART(1);
 	}
