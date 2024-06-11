@@ -60,48 +60,54 @@ void SuministrarAgua()
 {
 	GPIOOn(GPIO_BOMBA_AGUA); // Prender Bomba agua
 }
-/**
- * @brief 
+/** @fn void sensorPHA()
+ * @brief Activa la bomba de pha
  */
 void sensorPHA()
 {
 	GPIOOn(GPIO_BOMBA_PHA); // Prender Bomba pha
 }
-/**
- * @brief 
+/** @fn void sensorPHB()
+ * @brief Activa la bomba de pha
  */
 void sensorPHB()
 {
 	GPIOOn(GPIO_BOMBA_PHB); // Prender Bomba phb
 }
-/**
- * @brief 
+/** @fn void sensor_humedad()
+ * @brief pone en alto el sensor de humedad
  */
 void sensor_humedad()
 {
 	GPIOOn(SENSOR_HUMEDAD); //
 }
 
-/**
- * @brief 
+/** @fn void Stop()
+ * @brief al utilizar la tecla 2 se detiene el sitema
  */
-void FunctionStop()
+void Stop()
 {
 	start = false;
 }
-/**
- * @brief 
+/** @fn void Start()
+ * @brief al utilizar la tecla 1 se inicia el sitema
  */
-void FunctionStart()
+void Start()
 {
 	start = true;
 }
 
+/** @fn uint16_t ConvertirVoltajeA_PH(uint16_t voltaje)
+ * @brief Convierte un valor de voltaje a ph
+ */
 uint16_t ConvertirVoltajeA_PH(uint16_t voltaje)
 {
 	return PH_MIN + (voltaje - VOLTAJE_MIN) * (PH_MAX - VOLTAJE_MIN) / (VOLTAJE_MAX - VOLTAJE_MIN);
 }
 
+/** @fn void MensajeUART(uint8_t mensaje)
+ * @brief maneja los mensajes de la UART
+ */
 void MensajeUART(uint8_t mensaje) // mensajes a traves de la uart
 { 
 	switch (mensaje)
@@ -126,7 +132,9 @@ void MensajeUART(uint8_t mensaje) // mensajes a traves de la uart
 	}
 }
 
-
+/** @fn void Task_SuministoAgua(void *pvParameter)
+ * @brief maneja el suministro de humedad, activando una bomba de agua en caso que se necesite
+ */
 void Task_SuministoAgua(void *pvParameter)
 {
 	uint16_t humedad;
@@ -141,11 +149,12 @@ void Task_SuministoAgua(void *pvParameter)
 		MensajeUART(2);
 		MensajeUART(5);
 
-	}
-	
-	
+	}	
 }
 
+/** @fn void Task_MedirPH(void *pvParameter)
+ * @brief maneja la activacion de las bombas de ph en caso de ser necesario, ya que sensa los valores de ph
+ */
 void Task_MedirPH(void *pvParameter)
 {
     uint16_t sensor_ph=0; 
@@ -173,16 +182,17 @@ while (1)
 		    sensorPHA();
 			MensajeUART(3);
 		}
-		
 	}
-	
 }
-
 }
 
 
 /*==================[external functions definition]==========================*/
 void app_main(void){
+int8_t SwitchesInit(void);
+
+SwitchActivInt(SWITCH_1, &Start, NULL);
+SwitchActivInt(SWITCH_2, &Stop, NULL);
 //para la bomba de agua
 	GPIOInit(GPIO_BOMBA_AGUA, GPIO_OUTPUT);
 	GPIOOff(GPIO_BOMBA_AGUA);
