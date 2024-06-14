@@ -41,6 +41,18 @@
  *
  */
 
+/* 
+Modifique la actividad del punto 1 de manera de utilizar interrupciones para el 
+control de las teclas y el control de tiempos (Timers). 
+
+1) ESTO ME PEDIA EL 1...
+Mostrar el valor de distancia en cm utilizando el display LCD.
+Usar TEC1 para activar y detener la medición.
+Usar TEC2 para mantener el resultado (“HOLD”).
+Refresco de medición: 1 s
+
+*/
+
 /*==================[inclusions]=============================================*/
 #include <stdio.h>
 #include <stdint.h>
@@ -169,7 +181,7 @@ void app_main(void)
 	HcSr04Init(GPIO_3, GPIO_2);
 	SwitchesInit();
 
-	SwitchActivInt(SWITCH_1, &prende_apaga, NULL);
+	SwitchActivInt(SWITCH_1, &prende_apaga, NULL); //INTERRUPCIONES CON TECLAS
 	SwitchActivInt(SWITCH_2, &Hold, NULL);
 
 	timer_config_t my_timer={
