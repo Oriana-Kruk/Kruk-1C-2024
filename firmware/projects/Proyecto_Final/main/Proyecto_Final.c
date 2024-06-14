@@ -53,14 +53,14 @@ uint16_t contador = 0;
  * @brief mide temperatura y humedad y convierte de analogico a digital
  * @param void *pvParameter
  */
-static void medir_tempertatura_y_humedad(void *pvParameter);
+
 
 /*==================[external functions definition]==========================*/
 
 static void medir_tempertatura_y_humedad(void *pvParameter)
 {
     float temperature, humidity;
-
+char msg[10];
     while (true)
     {
         // Medir la temperatura y humedad utilizando el sensor Si7007
@@ -70,6 +70,9 @@ static void medir_tempertatura_y_humedad(void *pvParameter)
         //para ver si mide bien por el monitor device
         printf("valores  de temperatura %f, humedad %f \n", temperature, humidity);
 
+
+
+       
         // Esperar un tiempo antes de realizar la siguiente medición
         vTaskDelay(1000/portTICK_PERIOD_MS); // Esperar 10 minutos (600000 ms) // deberia ponerlo menos para poder probar 
     }
@@ -103,18 +106,30 @@ void ContarLineas(){
 
 static void deteccion(void *pvParameter)
 {
+    char msg[10]; // para lo que se manda por bluetooth
+
     while (true)
     {
     medir_tempertatura_y_humedad(pvParameter);
     medir_velocidad(pvParameter);
 
  //ver con que valores pruebo en la vida real seria temp>30`C hum<30%  viento>20km/h
-    if (temperature>30 && humidity<30 && vel_viento>20)
-    {
-       BleSendString("RIESGO DE INCENDIO");
-    }
+   // if (temperature>20 && humidity<100 && vel_viento>0.6)
     
-       // printf("velocidad del viento %f \n", vel_viento);
+      //lo que se manda por bluetooth
+      // BleSendString("*f RIESGO DE INCENDIO"); //mensaje de riesgo
+
+        printf ( "RIESGO DE INCENDIO");
+       sprintf(msg, "*f RIESGO DE INCENDIO*"); 
+       BleSendString(msg);
+     
+       sprintf(msg, "*T%.2f*", temperature);  // barra de temperatura
+       BleSendString(msg);
+       sprintf(msg, "*B%.2f*", humidity);    // barra de humedad 
+       BleSendString(msg);
+       sprintf(msg, "*D%.2f*", vel_viento);    // barra de velocidad del viento 
+       BleSendString(msg);
+    
         vTaskDelay(1000/portTICK_PERIOD_MS); 
     }
 }
@@ -128,12 +143,12 @@ void app_main(void)
     LedsInit();
 
     // configura el sensor Si7007
- //   Si7007_config my_sensor = {
-  //      .select = GPIO_9,
- //       .PWM_1 = CH1,
-   //     .PWM_2 = CH2,
-   // };
-    //Si7007Init(&my_sensor);  // Inicializar el sensor Si7007
+       Si7007_config my_sensor = {
+        .select = GPIO_9,
+       .PWM_1 = CH1,
+        .PWM_2 = CH2,
+    };
+    Si7007Init(&my_sensor);  // Inicializar el sensor Si7007
 
     ble_config_t ble_configuration = {
         "Alarma incendios",
@@ -142,9 +157,9 @@ void app_main(void)
     BleInit(&ble_configuration);
 
     // Creo las tareas
-   // xTaskCreate(&medir_tempertatura_y_humedad, "medir tempertatura y humedad", 2048, NULL, 5, NULL);
-   // xTaskCreate(&medir_velocidad, "medir velocidad del viento", 2048, NULL, 5, NULL);
-   // xTaskCreate(&deteccion, "alerta deteccion peligrosa", 2048, NULL, 5, NULL);
+   xTaskCreate(&medir_tempertatura_y_humedad, "medir tempertatura y humedad", 2048, NULL, 5, NULL);
+    xTaskCreate(&medir_velocidad, "medir velocidad del viento", 2048, NULL, 5, NULL);
+    xTaskCreate(&deteccion, "alerta deteccion peligrosa", 2048, NULL, 5, NULL);
 
 while(1){
         vTaskDelay(CONFIG_BLINK_PERIOD / portTICK_PERIOD_MS);
