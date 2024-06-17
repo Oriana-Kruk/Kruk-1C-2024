@@ -50,6 +50,9 @@
         },
         {
             "path": "projects/practica3"
+        },
+        {
+            "path": "projects/recuperatorio"
         }
     ],
     "settings": {
