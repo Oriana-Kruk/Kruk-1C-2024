@@ -40,13 +40,13 @@
             "path": "projects/Proyecto_Final"
         },
         {
-            "path": "projects/Practica"
-        },
-        {
             "path": "projects/practica1"
         },
         {
             "path": "projects/examen"
+        },
+        {
+            "path": "projects/practica2"
         }
     ],
     "settings": {

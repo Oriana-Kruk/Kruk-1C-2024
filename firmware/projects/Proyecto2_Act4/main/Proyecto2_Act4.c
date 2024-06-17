@@ -71,7 +71,7 @@ const char ecg[BUFFER_SIZE] = {
 };
 /*==================[internal functions declaration]=========================*/
 TaskHandle_t task_handle1 = NULL;
-TaskFunction_t task_handle2 = NULL;
+TaskHandle_t task_handle2 = NULL;
 
  /** @fn  void Notify(void *param)
   * @brief  notifica a las tareas task_handle1 y task_handle2
@@ -138,12 +138,16 @@ void app_main(void)
 		.input = CH1,		// Se configura para leer del canal 1 del conversor analógico-digital (ADC)
 		.mode = ADC_SINGLE, // Se configura para realizar una única lectura analógica
 	};
+	AnalogInputInit(&analogInput1); // Inicializa la entrada analógica utilizando la configuración proporcionada en analogInput1.
+
 	analog_input_config_t analogInput2 = {
 		.input = CH0,        // Se configura para leer del canal 0 del conversor analógico-digital (ADC)
 		.mode = ADC_SINGLE,  // Se configura para realizar una única lectura analógica
 	};
+	AnalogOutputInit(); //Inicializa la salida analógica
 	
-	// inicialización de timers 
+	
+	// configuro de timers 
 	timer_config_t timer_1 = {
 		.timer = TIMER_A,
 		.period = TIME_PERIOD,
@@ -151,7 +155,7 @@ void app_main(void)
 		.param_p = NULL};
 	timer_config_t timer_2 = {
 		.timer = TIMER_B,
-		.period = TIME_PERIOD,
+		.period = TIME_PERIOD2,
 		.func_p = Notify2,
 		.param_p = NULL};
 	//configura los parámetros de comunicación serial, específicamente para la UART 
@@ -160,15 +164,15 @@ void app_main(void)
 		.baud_rate = 115200,//velocidad de transmisión de datos en baudios
 		.func_p = NULL,
 		.param_p = NULL};
+    UartInit(&serial_global);//Inicializa la comunicación serial UART utilizando la configuración proporcionada en serial_global
 
 	TimerInit(&timer_1); //Inicializa el temporizador 1 con la configuración previamente definida en timer_1
 	TimerInit(&timer_2); //Inicializa el temporizador 2 con la configuración previamente definida en timer_2
-	AnalogOutputInit(); //Inicializa la salida analógica
-	AnalogInputInit(&analogInput1); // Inicializa la entrada analógica utilizando la configuración proporcionada en analogInput1.
+	
 	xTaskCreate(&deAnalogico_aDigital, "leer y enviar", 2048, NULL, 5, &task_handle1);//Crea una tarea llamada deAnalogico_aDigital
 	                                                                                  //El puntero task_handle1 es una bandera se utiliza para almacenar el identificador de la tarea creada.
 	xTaskCreate(&deDigital_aAnalogico, "leer y enviar", 2048, NULL, 5, &task_handle2);
-	UartInit(&serial_global);//Inicializa la comunicación serial UART utilizando la configuración proporcionada en serial_global
+	
 	TimerStart(timer_1.timer);// Inicia el temporizador para que comience a contar según su configuración.
 	TimerStart(timer_2.timer);
 }
