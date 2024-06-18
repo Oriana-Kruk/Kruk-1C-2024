@@ -12,6 +12,7 @@
  * |:--------------:    |:--------------------------|
  * | 	HcSr04 	        | 	GPIO_20 y GPIO_21		|
  * | SENSOR_TEMPERATURA |       	CH1		        |
+ * |    GPIO_ALARMA     |       	GPIO_9		    |
  *
  *
  * @section changelog Changelog
@@ -41,33 +42,66 @@
 #define TIME_PERIOD2 100000 // 100 ms
 
 #define SENSOR_TEMPERATURA CH1
+#define GPIO_ALARMA GPIO_9
+
 
 #define VOLTAJE_MIN 0.0
 #define VOLTAJE_MAX 3300
 #define TEMPERATURA_MIN 20.0
 #define TEMPERATURA_MAX 50.0
+#define TEMP_OBJEIVO 37.5
 /*==================[macros and definitions]=================================*/
 uint16_t distancia;
 float promedio;
+float suma;
 /*==================[internal data definition]===============================*/
 
 /*==================[internal functions declaration]=========================*/
 TaskHandle_t task_handle = NULL;
 TaskHandle_t task_handle2 = NULL;
 
+/** @fn  void Notify(void *param)
+ * @brief  notifica a la tareas task_handle
+ * @param *param
+ */
 void Notify(void *param)
 {
 	vTaskNotifyGiveFromISR(task_handle, pdFALSE);
 }
+/** @fn  void Notify(void *param)
+ * @brief  notifica a la tareas task_handle1
+ * @param *param
+ */
 void Notify2(void *param)
 {
 	vTaskNotifyGiveFromISR(task_handle2, pdFALSE);
 }
+/** @fn  ConvertirVoltajeATemperatura(uint16_t voltaje)
+ * @brief  convierte los valores de voltaje a temperatura
+ * @param voltaje
+ */
 uint16_t ConvertirVoltajeATemperatura(uint16_t voltaje)
 {
 	return TEMPERATURA_MIN + (voltaje - VOLTAJE_MIN) * (TEMPERATURA_MAX - VOLTAJE_MIN) / (VOLTAJE_MAX - VOLTAJE_MIN);
 }
-
+/** @fn  void activarAlarma()
+ * @brief  activa la alarma
+ */
+void activarAlarma()
+{
+	GPIOOn(GPIO_ALARMA);
+}
+/** @fn  void desactivarAlarma()
+ * @brief  activa la alarma
+ */
+void desactivarAlarma()
+{
+	GPIOOff(GPIO_ALARMA);
+}
+/** @fn  void medirDistancia(void *pvParameter)
+ * @brief  Tarea que mide la distancia y prende el led necesario dependiendo de la distancia
+ * @param .void *pvParameter
+ */
 void medirDistancia(void *pvParameter)
 {
 	while (1)
@@ -84,12 +118,21 @@ void medirDistancia(void *pvParameter)
 		{
 			LedOn(LED_2);
 		}	
-		else 
-		LedOn(LED_3);
-		
+		else if (distancia > 12 && distancia < 140)
+		{
+	        LedOn(LED_3);
+		}
+		else if (distancia > 140) // se reiniciar el ciclo de medidas
+		{
+			suma=0.0;
+		}
 	}
 }		
-
+/** @fn  void medirTemperatura(void *pvParameter)
+ * @brief  Tarea que mide la temperatura cuando se encuentra en la distancia correcta. 
+ *         Ademas, calcula el promedio de las 10 mediciones y las informa por UART junto con su distancia
+ * @param .void *pvParameter
+ */
 void medirTemperatura(void *pvParameter)
 {
 	uint16_t temperatura_mV;
@@ -105,11 +148,11 @@ void medirTemperatura(void *pvParameter)
 
     if (distancia >=8 && distancia <=12)
 	{
-		 for(int i = 0; i < numMediciones; i++)
-		{
 		AnalogInputReadSingle(SENSOR_TEMPERATURA, &temperatura_mV); 
 		temperatura = ConvertirVoltajeATemperatura(temperatura_mV);
 
+		 for(int i = 0; i < numMediciones; i++)
+		{
         mediciones[i] = temperatura;
 		suma += mediciones[i];
 		float promedio = suma / numMediciones;
@@ -120,7 +163,15 @@ void medirTemperatura(void *pvParameter)
         UartSendString(UART_PC, "Cº");
         UartSendString(UART_PC, (char *) UartItoa(distancia, 10));
         UartSendString(UART_PC, "cm\r\n");
-	 
+
+		if (temperatura < TEMP_OBJEIVO )
+		{
+			desactivarAlarma();
+		}
+		else if (temperatura > TEMP_OBJEIVO)
+		{
+			activarAlarma();
+		}
 	}
     }
 }
@@ -149,7 +200,7 @@ void app_main(void){
 	TimerStart(timer_2.timer); // para que comience el timer 2
 
 	HcSr04Init(GPIO_20, GPIO_21); 
-	GPIOInit(SENSOR_TEMPERATURA, GPIO_OUTPUT);
+	GPIOInit(GPIO_ALARMA, GPIO_INPUT);
 
 	LedsInit();
 
