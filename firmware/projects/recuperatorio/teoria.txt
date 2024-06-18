@@ -1,0 +1,48 @@
+1- Diferencia entre un temporizador de uso general y un temporizador del tipo Watchdog Timer.
+
+TEMPORIZADOR DE USO GENERAL
+Un temporizador de uso general es un dispositivo o módulo en un microcontrolador que cuenta pulsos de reloj para medir intervalos de tiempo 
+o generar eventos periódicos. Estos temporizadores pueden ser configurados para operar en varios modos, como contar hasta un valor específico,
+generar interrupciones a intervalos regulares, o medir la duración de eventos externos.
+
+Alguno de sus usos son:
+-Medición de Intervalos de Tiempo: Por ejemplo, medir el tiempo entre dos eventos externos, como la duración de un pulso.
+-Generación de Eventos Periódicos: Generar interrupciones a intervalos regulares, útil para tareas como la actualización de displays o la lectura de sensores.
+
+Algunas de sus aplicaciones son:
+-Cronómetros y Temporizadores: En relojes digitales o temporizadores de cocina.
+-Sistemas Embebidos: Realización de tareas periódicas, como el muestreo de sensores o la actualización de pantallas LCD.
+
+
+TEMPORIZADOR DE TIPO WATCHDOG TIMER
+Un Watchdog Timer (WDT) es un temporizador especial que se utiliza para detectar y recuperar de fallas en el sistema. El WDT se configura para reiniciar el sistema 
+si no se le "alimenta" (resetea) dentro de un intervalo de tiempo específico. La idea es que un software funcionando correctamente "alimente" regularmente al WDT.
+ Si el software se cuelga o entra en un estado inesperado, dejará de alimentar al WDT, provocando un reinicio del sistema.
+
+Usos:
+Detección de Fallos en el Sistema: Detectar cuando el software del sistema embebido se cuelga o entra en un bucle infinito.
+
+Aplicaciones:
+-Asegurar que el sistema de control no quede atrapado en un estado de fallo, reiniciándolo automáticamente.
+-Proveer una capa adicional de seguridad y confiabilidad, reiniciando el sistema en caso de fallos de software.
+-Sistemas de Seguridad y Alarmas: Garantizar que el sistema de alarma siempre esté en funcionamiento, reiniciándolo si deja de responder.
+
+
+2- Explique que son el tiempo de adquisición y período de muestreo; y la relación que hay entre ellos.
+
+tiempo de adquisición: intervalo de tiempo necesario para que la salida -el circuito RC- alcance el valor de la entradaseñal a muestrear con un error especificado. 
+periodo de muestreo: es el intervalo total entre muestras sucesivas, y debe ser lo suficientemente largo para incluir el tiempo de adquisición y el tiempo de conversión del A/D.
+
+La relación entre el tiempo de adquisición y el período de muestreo es que el tiempo de adquisición debe ser suficientemente corto para permitir que se complete 
+dentro del período de muestreo. Si el tiempo de adquisición es demasiado largo, puede reducir la cantidad de tiempo disponible para el resto del proceso de
+conversión A/D y limitar la frecuencia de muestreo máxima.
+
+
+3-Explique qué sucede si el tiempo de adquisición es mayor que el período de muestreo. 
+
+Si el tiempo de adquisición es mayor que el período de muestreo, el convertidor analógico-digital (A/D) no tendrá suficiente tiempo para adquirir
+una señal estable antes de que comience la siguiente adquisición. Esto puede resultar en:
+
+-La señal analógica no se captura adecuadamente, lo que lleva a una conversión errónea o imprecisa.
+-Algunas muestras pueden no ser capturadas, lo que provoca una pérdida de información.
+-El convertidor A/D puede no funcionar de manera óptima, afectando el rendimiento general del sistema.

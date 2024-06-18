@@ -1,8 +1,13 @@
-/*! @mainpage Template
+/*! @mainpage recuperatorio
  *
  * @section genDesc General Description
  *
- * This section describes how the program works.
+ * Se pretende diseñar un dispositivo que se utilizará para medir la temperatura de individuos en la entrada de la FI-UNER.
+ * Dicho dispositivo cuenta con una termopila para el sensado de temperatura, con su correspondiente circuito de 
+ * acondicionamiento. Cuenta además con un sensor de ultrasonido HC-SR04 para medir la distancia de la persona a la 
+ * termopila. Estos sensores trabajan midiendo la temperatura de un objeto a la distancia, siendo esta distancia 
+ * preestablecida (según el sensor, lentes, etc.) para obtener datos de temperatura correctos. Para la termopila utilizada
+ * esa distancia es de 10cm ±2cm.
  *
  * <a href="https://drive.google.com/...">Operation Example</a>
  *
@@ -19,10 +24,9 @@
  *
  * |   Date	    | Description                                    |
  * |:----------:|:-----------------------------------------------|
- * | 12/09/2023 | Document creation		                         |
+ * | 18/06/2024 | Document creation		                         |
  *
- * @author Albano Peñalva (albano.penalva@uner.edu.ar)
- *
+ * @author Oriana Kruk 
  */
 
 /*==================[inclusions]=============================================*/
