@@ -2,9 +2,15 @@
  *
  * @section genDesc General Description
  *
- * This section describes how the program works.
+ * El objetivo de este programa es prevenir incendios en los campos.
+ * Midiendo variables como la temperatura, la humedad y la velocidad del viento
+ * En caso que se cumpla que esas variables se encuentran en cierto rango:
+ * (temperatura>30°C, humedad<30% y velocidad del viento > 30km7h)
+ * se manda una alarma al celular del dueño del campo y a los bomberos alertando
+ * la posibilidad de que ocurra un incendio en esa zona, para que se pueda prevenir
+ * o en caso de que ocurra poder actuar lo antes posible.
  *
- * <a href="https://drive.google.com/...">Operation Example</a>
+ * <a href="c:\Users\Valentina\Downloads\WhatsApp Video 2024-06-21 at 09.42.14.mp4">Video del proyecto funcionando>
  *
  * @section hardConn Hardware Connection
  *
@@ -119,7 +125,7 @@ static void deteccion(void *pvParameter)
 
     while (true)
     {
-        // en la vida real seria temp>30`C hum<30%  viento>20km/h pero utilizo valores que pueda probar en el aula
+        // en la vida real seria temp>30`C hum<30%  viento>30km/h pero utilizo valores que pueda probar en el aula
         if (temperature > 20 && humidity < 60 && vel_viento > 0.1)
         {
             printf("RIESGO DE INCENDIO \n");
